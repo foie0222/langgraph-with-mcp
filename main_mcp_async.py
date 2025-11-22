@@ -59,7 +59,6 @@ class MCPClientManager:
 
         result = await self.session.call_tool(tool_name, arguments)
 
-        # 結果を文字列に変換
         if result.content:
             return "\n".join(
                 item.text if isinstance(item, TextContent) else str(item)
@@ -68,7 +67,6 @@ class MCPClientManager:
         return ""
 
 
-# グローバルなMCPクライアントマネージャー
 mcp_manager = MCPClientManager()
 
 
@@ -83,7 +81,6 @@ llm = ChatBedrockConverse(
 
 
 def create_graph(tools: list[BaseTool]) -> CompiledStateGraph:
-    """ツールを受け取ってグラフを作成"""
     llm_with_tools = llm.bind_tools(tools)
 
     async def call_model(state: MessagesState) -> dict:
