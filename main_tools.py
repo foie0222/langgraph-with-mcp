@@ -3,13 +3,14 @@ import operator
 from langchain_aws import ChatBedrockConverse
 from langchain_core.messages import HumanMessage
 from langchain_core.tools import tool
-from langgraph.graph import START, MessagesState, StateGraph
+from langgraph.graph import END, START, MessagesState, StateGraph
 from langgraph.graph.state import CompiledStateGraph
 from langgraph.prebuilt import ToolNode, tools_condition
 
 from utils import print_messages
 
 
+# 計算ツールを定義
 @tool
 def calculate(operation: str, a: float, b: float) -> str:
     """2つの数値で計算を実行する
@@ -47,7 +48,7 @@ llm = ChatBedrockConverse(
     region_name="ap-northeast-1",
 )
 
-llm_with_tools = llm.bind_tools(tools)
+llm_with_tools = llm.bind_tools(tools)  # LLMの呼び出し時にツールの情報を渡す
 
 
 def call_model(state: MessagesState) -> dict:
@@ -60,14 +61,15 @@ def create_graph() -> CompiledStateGraph:
     workflow = StateGraph(MessagesState)
 
     workflow.add_node("agent", call_model)
-    workflow.add_node("tools", ToolNode(tools))
+    workflow.add_node("tools", ToolNode(tools))  # ToolNode を追加
 
     workflow.add_edge(START, "agent")
-    workflow.add_conditional_edges(
+    workflow.add_conditional_edges(  # add_conditional_edges で LLM がツールを呼ぶ必要があると判断したら ToolNode に遷移
         "agent",
         tools_condition,
     )
     workflow.add_edge("tools", "agent")
+    workflow.add_edge("agent", END)
 
     return workflow.compile()
 

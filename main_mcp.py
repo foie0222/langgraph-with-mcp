@@ -16,7 +16,6 @@ LangGraphのToolNodeで使用します。
 
 import asyncio
 from contextlib import asynccontextmanager
-from typing import Any
 
 from langchain_aws import ChatBedrockConverse
 from langchain_core.messages import HumanMessage
@@ -27,7 +26,6 @@ from langgraph.graph.state import CompiledStateGraph
 from langgraph.prebuilt import ToolNode, tools_condition
 from mcp import ClientSession
 from mcp.client.streamable_http import streamablehttp_client
-from mcp.types import TextContent
 
 from utils import print_messages
 
@@ -51,20 +49,6 @@ class MCPClientManager:
                 await session.initialize()
                 self.session = session
                 yield session
-
-    async def call_tool(self, tool_name: str, arguments: dict[str, Any]) -> str:
-        """MCPツールを呼び出す"""
-        if not self.session:
-            raise RuntimeError("MCP session not initialized")
-
-        result = await self.session.call_tool(tool_name, arguments)
-
-        if result.content:
-            return "\n".join(
-                item.text if isinstance(item, TextContent) else str(item)
-                for item in result.content
-            )
-        return ""
 
 
 mcp_manager = MCPClientManager()

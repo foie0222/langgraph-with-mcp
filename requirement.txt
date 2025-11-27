@@ -1,0 +1,4 @@
+langchain-aws==1.0.0
+langchain-core==1.0.5
+langchain-mcp-adapters==0.1.13
+langgraph==1.0.3

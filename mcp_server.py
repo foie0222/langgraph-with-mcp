@@ -2,7 +2,7 @@ import operator
 
 from mcp.server.fastmcp import FastMCP  # Create MCP server instance
 
-mcp = FastMCP("Calculate", host="localhost", port="8000", debug=True, log_level="DEBUG")
+mcp = FastMCP("Calculate", host="localhost", port="8000", debug=True, log_level="INFO")
 
 
 @mcp.tool()
